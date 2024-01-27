@@ -310,6 +310,7 @@ while running:
                     move(hero_2, "right")
                     count_2 += 1
                     count_motion += 1
+
     if count_1 == 40:
         player_1_purse += 200
         count_1 = 0
