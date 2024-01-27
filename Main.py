@@ -323,7 +323,7 @@ while running:
     elif count_motion == step:
         motion = switch_motion(motion)
         count_motion = 0
-        step = -1
+        step = -10
 
     # координаты блока: 102, 97____698, 982
     string_rendered_1 = font.render(f'in jail?: {str(in_jail_1), str(in_jail_2)}', 1, pygame.Color('black'))
