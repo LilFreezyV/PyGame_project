@@ -325,11 +325,8 @@ while running:
         count_motion = 0
         step = -1
 
-<<<<<<< HEAD
-=======
 
 
->>>>>>> ec51ee2 (Initial commit)
     # координаты блока: 102, 97____698, 982
     string_rendered_1 = font.render(f'in jail?: {str(in_jail_1), str(in_jail_2)}', 1, pygame.Color('black'))
     string_rendered_2 = font.render(f'step: {str(step)}', 1, pygame.Color('black'))
