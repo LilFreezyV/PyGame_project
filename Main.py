@@ -321,6 +321,7 @@ while running:
     if count_motion == step and double:
         count_motion = 0
         step = -1
+        double = False
     elif count_motion == step:
         motion = switch_motion(motion)
         count_motion = 0
@@ -328,7 +329,7 @@ while running:
 
 
     # координаты блока: 102, 97____698, 982
-    string_rendered_1 = font.render(f'in jail?: {str(in_jail_1), str(in_jail_2)}', 1, pygame.Color('black'))
+    string_rendered_1 = font.render(f'motion: {str(motion)}', 1, pygame.Color('black'))
     string_rendered_2 = font.render(f'step: {str(step)}', 1, pygame.Color('black'))
     string_rendered_3 = font.render(f'count_motion: {str(count_motion)}', 1, pygame.Color('black'))
     string_rendered_4 = font.render(f'count: {str(count_1), str(count_2)}', 1, pygame.Color('black'))
