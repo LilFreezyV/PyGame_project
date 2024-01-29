@@ -321,12 +321,10 @@ while running:
     if count_motion == step and double:
         count_motion = 0
         step = -1
-        double = False
     elif count_motion == step:
         motion = switch_motion(motion)
         count_motion = 0
         step = -1
-
 
     # координаты блока: 102, 97____698, 982
     string_rendered_1 = font.render(f'motion: {str(motion)}', 1, pygame.Color('black'))
