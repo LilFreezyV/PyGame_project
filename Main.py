@@ -311,20 +311,20 @@ while running:
                     count_2 += 1
                     count_motion += 1
 
-    if count_1 == 40:
-        player_1_purse += 200
-        count_1 = 0
-    if count_2 == 40:
-        player_2_purse += 200
-        count_2 = 0
+            if count_1 == 40:
+                player_1_purse += 200
+                count_1 = 0
+            if count_2 == 40:
+                player_2_purse += 200
+                count_2 = 0
 
-    if count_motion == step and double:
-        count_motion = 0
-        step = -1
-    elif count_motion == step:
-        motion = switch_motion(motion)
-        count_motion = 0
-        step = -1
+            if count_motion == step and double:
+                count_motion = 0
+                step = -1
+            elif count_motion == step:
+                motion = switch_motion(motion)
+                count_motion = 0
+                step = -1
 
     # координаты блока: 102, 97____698, 982
     string_rendered_1 = font.render(f'motion: {str(motion)}', 1, pygame.Color('black'))
