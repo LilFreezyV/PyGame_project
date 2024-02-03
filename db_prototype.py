@@ -306,22 +306,24 @@ while running:
                 motion = switch_motion(motion)
 
             if motion == 1 and count_motion <= step:
-                if event.key == pygame.K_UP and hero_1.pos[0] < 101:
+                count += 1
+                print(f'{count} ***********************')
+                if event.key == pygame.K_UP:
                     move(hero_1, "up")
                     count_1 += 1
                     count_motion += 1
                     person_1_steps += 1
-                elif event.key == pygame.K_DOWN and hero_1.pos[0] > 698 and hero_1.pos[1] < 628:
+                elif event.key == pygame.K_DOWN:
                     move(hero_1, "down")
                     count_1 += 1
                     count_motion += 1
                     person_1_steps += 1
-                elif event.key == pygame.K_LEFT and hero_1.pos[1] > 682:
+                elif event.key == pygame.K_LEFT:
                     move(hero_1, "left")
                     count_1 += 1
                     count_motion += 1
                     person_1_steps += 1
-                elif event.key == pygame.K_RIGHT and hero_1.pos[1] < 97:
+                elif event.key == pygame.K_RIGHT:
                     move(hero_1, "right")
                     count_1 += 1
                     count_motion += 1
@@ -335,22 +337,22 @@ while running:
                     person_1_steps = 0
                     dict[1] = key1
             if motion == 2 and count_motion <= step:
-                if event.key == pygame.K_UP and hero_2.pos[0] < 101:
+                if event.key == pygame.K_UP:
                     move(hero_2, "up")
                     count_2 += 1
                     count_motion += 1
                     person_2_steps += 1
-                elif event.key == pygame.K_DOWN and hero_2.pos[0] > 698 and hero_2.pos[1] < 628:
+                elif event.key == pygame.K_DOWN:
                     move(hero_2, "down")
                     count_2 += 1
                     count_motion += 1
                     person_2_steps += 1
-                elif event.key == pygame.K_LEFT and hero_1.pos[1] > 682:
+                elif event.key == pygame.K_LEFT:
                     move(hero_2, "left")
                     count_2 += 1
                     count_motion += 1
                     person_2_steps += 1
-                elif event.key == pygame.K_RIGHT and hero_2.pos[1] < 97:
+                elif event.key == pygame.K_RIGHT:
                     move(hero_2, "right")
                     count_2 += 1
                     count_motion += 1
@@ -372,11 +374,11 @@ while running:
 
             if count_motion == step and double:
                 count_motion = 0
-                step = -1
+                step = -10
             elif count_motion == step:
                 motion = switch_motion(motion)
                 count_motion = 0
-                step = -1
+                step = -10
 
     # координаты блока: 102, 97____698, 982
     string_rendered_1 = font.render(f'motion: {str(motion)}', 1, pygame.Color('black'))
