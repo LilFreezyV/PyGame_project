@@ -306,8 +306,6 @@ while running:
                 motion = switch_motion(motion)
 
             if motion == 1 and count_motion <= step:
-                count += 1
-                print(f'{count} ***********************')
                 if event.key == pygame.K_UP:
                     move(hero_1, "up")
                     count_1 += 1
