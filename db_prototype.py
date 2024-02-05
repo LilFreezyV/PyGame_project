@@ -41,6 +41,8 @@ cursor = db.cursor()
 
 player_user = ''
 
+answer = ''
+
 field_image = load_image('field.jpg')
 player_image_1 = load_image('mar.png')
 player_image_2 = load_image('player_2.png')
@@ -226,6 +228,7 @@ def end_screen(player_loser):
 
 
 def buy_or_not():
+    global answer
     intro_text = ["Покупать будешь?",
                   '1 - да. 2 - нет.']
 
@@ -248,10 +251,12 @@ def buy_or_not():
                 terminate()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_1:
-                    print('yes')
+                    answer = 'yes'
+                    print(answer)
                     return
                 elif event.type == pygame.K_2:
-                    print('no')
+                    answer = 'no'
+                    print(answer)
         pygame.display.flip()
         clock.tick(FPS)
 
