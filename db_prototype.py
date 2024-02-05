@@ -37,6 +37,10 @@ max_y = height
 player_1_purse = 0
 player_2_purse = 0
 
+cursor = db.cursor()
+
+player_user = ''
+
 field_image = load_image('field.jpg')
 player_image_1 = load_image('mar.png')
 player_image_2 = load_image('player_2.png')
@@ -174,6 +178,34 @@ def start_screen():
     font = pygame.font.Font(None, 30)
     text_coord = 50
     for line in intro_text:
+        string_rendered = font.render(line, 1, pygame.Color('cyan'))
+        intro_rect = string_rendered.get_rect()
+        text_coord += 10
+        intro_rect.top = text_coord
+        intro_rect.x = 10
+        text_coord += intro_rect.height
+        screen.blit(string_rendered, intro_rect)
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            elif event.type == pygame.KEYDOWN or \
+                    event.type == pygame.MOUSEBUTTONDOWN:
+                return
+        pygame.display.flip()
+        clock.tick(FPS)
+
+
+def end_screen(player_loser):
+    intro_text = ["Игра окончена!", "",
+                  f"Проиграл игрок {player_loser}"]
+
+    fon = pygame.transform.scale(load_image('fon.jpg'), size)
+    screen.blit(fon, (0, 0))
+    font = pygame.font.Font(None, 30)
+    text_coord = 50
+    for line in intro_text:
         string_rendered = font.render(line, 1, pygame.Color('black'))
         intro_rect = string_rendered.get_rect()
         text_coord += 10
@@ -189,6 +221,37 @@ def start_screen():
             elif event.type == pygame.KEYDOWN or \
                     event.type == pygame.MOUSEBUTTONDOWN:
                 return
+        pygame.display.flip()
+        clock.tick(FPS)
+
+
+def buy_or_not():
+    intro_text = ["Покупать будешь?",
+                  '1 - да. 2 - нет.']
+
+    fon = pygame.transform.scale(load_image('fon.jpg'), size)
+    screen.blit(fon, (0, 0))
+    font = pygame.font.Font(None, 30)
+    text_coord = 50
+    for line in intro_text:
+        string_rendered = font.render(line, 1, pygame.Color('cyan'))
+        intro_rect = string_rendered.get_rect()
+        text_coord += 10
+        intro_rect.top = text_coord
+        intro_rect.x = 10
+        text_coord += intro_rect.height
+        screen.blit(string_rendered, intro_rect)
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_1:
+                    print('yes')
+                    return
+                elif event.type == pygame.K_2:
+                    print('no')
         pygame.display.flip()
         clock.tick(FPS)
 
@@ -278,6 +341,9 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_0:
+                end_screen(player_loser=player_user)
+                running = False
             if event.key == pygame.K_SPACE:
                 dice1_image, dice2_image, key1, key2, step = dice()
                 dice_1 = Dice_1(dice1_image, 150, 550)
@@ -327,13 +393,13 @@ while running:
                     count_motion += 1
                     person_1_steps += 1
                 if person_1_steps == step:
-                    cursor = db.cursor()
                     query = f""" SELECT name FROM expenses WHERE id = {count_1}"""
                     cursor.execute(query)
                     for res in cursor:
                         print(res[0])
                     person_1_steps = 0
                     dict[1] = key1
+                    buy_or_not()
             if motion == 2 and count_motion <= step:
                 if event.key == pygame.K_UP:
                     move(hero_2, "up")
@@ -356,12 +422,12 @@ while running:
                     count_motion += 1
                     person_2_steps += 1
                 if person_2_steps == step:
-                    cursor = db.cursor()
                     query = f""" SELECT name FROM expenses WHERE id = {count_2}"""
                     cursor.execute(query)
                     for res in cursor:
                         print(res[0])
                     person_2_steps = 0
+                    buy_or_not()
 
             if count_1 == 40:
                 player_1_purse += 200
