@@ -34,8 +34,12 @@ FPS = 30
 max_x = width
 max_y = height
 
-player_1_purse = 0
-player_2_purse = 0
+player_1_purse = 300
+player_2_purse = 300
+
+is_move_x = 1
+is_move_y = 1
+is_move = True
 
 cursor = db.cursor()
 
@@ -48,6 +52,7 @@ player_image_1 = load_image('mar.png')
 player_image_2 = load_image('player_2.png')
 
 all_sides_of_the_cube = {1: 'cube1.png', 2: 'cube2.png', 3: 'cube3.png', 4: 'cube4.png', 5: 'cube5.png', 6: 'cube6.png'}
+chances = {1: 'chance1.png', 2: 'chance2.png'}
 
 
 def dice():
@@ -56,6 +61,12 @@ def dice():
     key2 = list_of_all_sides_of_the_cube[randrange(len(list_of_all_sides_of_the_cube))]
     step = key1 + key2
     return load_image(all_sides_of_the_cube[key1]), load_image(all_sides_of_the_cube[key2]), key1, key2, step
+
+
+def chance():
+    list_chances = list(chances.keys())
+    _index = list_chances[randrange(len(list_chances))]
+    return load_image(chances[_index])
 
 
 class ScreenFrame(pygame.sprite.Sprite):
@@ -91,12 +102,13 @@ sprite_group = SpriteGroup()
 hero_group = SpriteGroup()
 dice_group = SpriteGroup()
 
+
 all_sprites = SpriteGroup()
-horizontal_borders = pygame.sprite.Group()
-vertical_borders = pygame.sprite.Group()
+horizontal_borders = SpriteGroup()
+vertical_borders = SpriteGroup()
 
 
-class Player_1(Sprite):
+class Player_1(pygame.sprite.Sprite):
     def __init__(self, pos_x, pos_y):
         super().__init__(hero_group)
         self.image = player_image_1
@@ -107,6 +119,16 @@ class Player_1(Sprite):
         self.pos = (x, y)
         self.rect = self.image.get_rect().move(
             self.pos[0] + 15, self.pos[1] + 5)
+
+    def is_move(self):
+        global is_move_x
+        global is_move_y
+
+        if pygame.sprite.spritecollideany(self, horizontal_borders):
+            is_move_y = 0
+        if pygame.sprite.spritecollideany(self, vertical_borders):
+            is_move_x = 0
+        return is_move_x, is_move_y
 
 
 class Player_2(Sprite):
@@ -152,17 +174,14 @@ class Border(pygame.sprite.Sprite):
 
 
 # координаты блока: 102, 97____698, 682
+#v     v vv          84, 80____720, 703
 # 797x780
 
-Border(102, 97, 102, 682)
-Border(102, 682, 698, 682)
-Border(102, 97, 698, 97)
-Border(698, 97, 698, 682)
+vertical_borders.add(Border(84, 80, 84, 703))
+horizontal_borders.add(Border(84, 703, 720, 703))
+horizontal_borders.add(Border(84, 80, 720, 80))
+vertical_borders.add(Border(720, 80, 720, 703))
 
-Border(0, 0, 797, 0)
-Border(0, 0, 0, 780)
-Border(0, 780, 797, 780)
-Border(797, 0, 797, 780)
 
 
 def terminate():
@@ -261,6 +280,19 @@ def buy_or_not():
         clock.tick(FPS)
 
 
+def get_chance(image):
+    fon = image
+    screen.blit(fon, (int((height / 2) - 75), int((width / 2) - 100)))
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            elif event.type == pygame.KEYDOWN or \
+                    event.type == pygame.MOUSEBUTTONDOWN:
+                return
+        pygame.display.flip()
+        clock.tick(FPS)
+
 def move(hero, movement):
     x, y = hero.pos
     if movement == "up":
@@ -275,6 +307,8 @@ def move(hero, movement):
     elif movement == "right":
         if x < max_x - 1:
             hero.move(x + 65, y)
+    is_move_x = True
+    is_move_y = True
 
 
 def to_jail(hero):
@@ -346,13 +380,23 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_0:
+            is_move_x, is_move_y = Player_1.is_move(hero_1)
+            if is_move_x == 0 or is_move_y == 0:
+                is_move = False
+            if is_move_x == 1 and is_move_y == 1:
+                is_move = True
+            if event.key == pygame.K_9:
                 end_screen(player_loser=player_user)
                 running = False
+            if event.key == pygame.K_0:
+                is_move = True
+            if event.key == pygame.K_5:
+                get_chance(chance())
             if event.key == pygame.K_SPACE:
                 dice1_image, dice2_image, key1, key2, step = dice()
                 dice_1 = Dice_1(dice1_image, 150, 550)
                 dice_2 = Dice_2(dice2_image, 350, 550)
+                print(is_move_x, is_move_y)
                 if key1 == key2:
                     double = True
                     if motion == 1:
@@ -373,66 +417,64 @@ while running:
                     in_jail_2 = True
                     to_jail(hero_2)
                     motion = switch_motion(motion)
-            if event.key == pygame.K_0:
-                motion = switch_motion(motion)
-
-            if motion == 1 and count_motion <= step:
-                if event.key == pygame.K_UP:
-                    move(hero_1, "up")
-                    count_1 += 1
-                    count_motion += 1
-                    person_1_steps += 1
-                elif event.key == pygame.K_DOWN:
-                    move(hero_1, "down")
-                    count_1 += 1
-                    count_motion += 1
-                    person_1_steps += 1
-                elif event.key == pygame.K_LEFT:
-                    move(hero_1, "left")
-                    count_1 += 1
-                    count_motion += 1
-                    person_1_steps += 1
-                elif event.key == pygame.K_RIGHT:
-                    move(hero_1, "right")
-                    count_1 += 1
-                    count_motion += 1
-                    person_1_steps += 1
-                if person_1_steps == step:
-                    query = f""" SELECT name FROM expenses WHERE id = {count_1}"""
-                    cursor.execute(query)
-                    for res in cursor:
-                        print(res[0])
-                    person_1_steps = 0
-                    dict[1] = key1
-                    buy_or_not()
-            if motion == 2 and count_motion <= step:
-                if event.key == pygame.K_UP:
-                    move(hero_2, "up")
-                    count_2 += 1
-                    count_motion += 1
-                    person_2_steps += 1
-                elif event.key == pygame.K_DOWN:
-                    move(hero_2, "down")
-                    count_2 += 1
-                    count_motion += 1
-                    person_2_steps += 1
-                elif event.key == pygame.K_LEFT:
-                    move(hero_2, "left")
-                    count_2 += 1
-                    count_motion += 1
-                    person_2_steps += 1
-                elif event.key == pygame.K_RIGHT:
-                    move(hero_2, "right")
-                    count_2 += 1
-                    count_motion += 1
-                    person_2_steps += 1
-                if person_2_steps == step:
-                    query = f""" SELECT name FROM expenses WHERE id = {count_2}"""
-                    cursor.execute(query)
-                    for res in cursor:
-                        print(res[0])
-                    person_2_steps = 0
-                    buy_or_not()
+            if is_move:
+                if motion == 1 and count_motion <= step:
+                    if event.key == pygame.K_UP:
+                        move(hero_1, "up")
+                        count_1 += 1
+                        count_motion += 1
+                        person_1_steps += 1
+                    elif event.key == pygame.K_DOWN:
+                        move(hero_1, "down")
+                        count_1 += 1
+                        count_motion += 1
+                        person_1_steps += 1
+                    elif event.key == pygame.K_LEFT:
+                        move(hero_1, "left")
+                        count_1 += 1
+                        count_motion += 1
+                        person_1_steps += 1
+                    elif event.key == pygame.K_RIGHT:
+                        move(hero_1, "right")
+                        count_1 += 1
+                        count_motion += 1
+                        person_1_steps += 1
+                    if person_1_steps == step:
+                        query = f""" SELECT name FROM expenses WHERE id = {count_1}"""
+                        cursor.execute(query)
+                        for res in cursor:
+                            print(res[0])
+                        person_1_steps = 0
+                        dict[1] = key1
+                        #buy_or_not()
+                if motion == 2 and count_motion <= step:
+                    if event.key == pygame.K_UP:
+                        move(hero_2, "up")
+                        count_2 += 1
+                        count_motion += 1
+                        person_2_steps += 1
+                    elif event.key == pygame.K_DOWN:
+                        move(hero_2, "down")
+                        count_2 += 1
+                        count_motion += 1
+                        person_2_steps += 1
+                    elif event.key == pygame.K_LEFT:
+                        move(hero_2, "left")
+                        count_2 += 1
+                        count_motion += 1
+                        person_2_steps += 1
+                    elif event.key == pygame.K_RIGHT:
+                        move(hero_2, "right")
+                        count_2 += 1
+                        count_motion += 1
+                        person_2_steps += 1
+                    if person_2_steps == step:
+                        query = f""" SELECT name FROM expenses WHERE id = {count_2}"""
+                        cursor.execute(query)
+                        for res in cursor:
+                            print(res[0])
+                        person_2_steps = 0
+                        #buy_or_not()
 
             if count_1 == 40:
                 player_1_purse += 200
@@ -443,15 +485,20 @@ while running:
 
             if count_motion == step and double:
                 count_motion = 0
-                step = -10
+                step = -1
+                is_move_x = 1
+                is_move_y = 1
             elif count_motion == step:
                 motion = switch_motion(motion)
                 count_motion = 0
-                step = -10
+                step = -1
+                is_move_x = 1
+                is_move_y = 1
 
     # координаты блока: 102, 97____698, 982
     string_rendered_1 = font.render(f'motion: {str(motion)}', 1, pygame.Color('black'))
-    string_rendered_2 = font.render(f'step: {str(step)}', 1, pygame.Color('black'))
+    string_rendered_2 = font.render(f'is_move: {str(is_move), str(is_move_x), str(is_move_y)}', 1,
+                                    pygame.Color('black'))
     string_rendered_3 = font.render(f'count_motion: {str(count_motion)}', 1, pygame.Color('black'))
     string_rendered_4 = font.render(f'count: {str(count_1), str(count_2)}', 1, pygame.Color('black'))
     string_rendered_5 = font.render(f'is double: {str(double)}', 1, pygame.Color('black'))
@@ -466,8 +513,11 @@ while running:
     sprite_group.draw(screen)
     hero_group.draw(screen)
     dice_group.draw(screen)
+    horizontal_borders.draw(screen)
+    vertical_borders.draw(screen)
 
     clock.tick(FPS)
     pygame.display.flip()
+
 
 pygame.quit()

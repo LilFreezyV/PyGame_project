@@ -35,8 +35,8 @@ FPS = 30
 max_x = width
 max_y = height
 
-player_1_purse = 300
-player_2_purse = 300
+player_1_purse = 1500
+player_2_purse = 1500
 
 cursor = db.cursor()
 
@@ -61,6 +61,7 @@ def chance():
     if _index == 2:
         tax = 50
     return load_image(chances[_index]), tax
+
 
 def get_chance(image):
     fon = image
@@ -260,10 +261,10 @@ def buy_or_not():
 
     fon = pygame.transform.scale(load_image('fon.jpg'), size)
     screen.blit(fon, (0, 0))
-    font = pygame.font.Font(None, 30)
+    font = pygame.font.Font(None, 75)
     text_coord = 50
     for line in intro_text:
-        string_rendered = font.render(line, 1, pygame.Color('cyan'))
+        string_rendered = font.render(line, 10, pygame.Color('cyan'))
         intro_rect = string_rendered.get_rect()
         text_coord += 10
         intro_rect.top = text_coord
@@ -439,6 +440,7 @@ player_1_renta_count_dict = {'Meditieval avenue': 1,
                              'Park place': 1,
                              'Boardwalk': 1}
 
+string_rendered_chance = font.render(' ', 1, pygame.Color('black'))
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -467,38 +469,37 @@ while running:
                         double_count_1 = 0
                     if motion == 2:
                         double_count_2 = 0
-                if double_count_1 == 3:
-                    in_jail_1 = True
-                    to_jail(hero_1)
-                    motion = switch_motion(motion)
-                if double_count_2 == 3:
-                    in_jail_2 = True
-                    to_jail(hero_2)
-                    motion = switch_motion(motion)
             if event.key == pygame.K_0:
                 motion = switch_motion(motion)
 
             if motion == 1 and count_motion <= step:
-                if event.key == pygame.K_UP and hero_1.pos[0] <= 105:
-                    move(hero_1, "up")
-                    count_1 += 1
-                    count_motion += 1
-                    person_1_steps += 1
-                elif event.key == pygame.K_DOWN and hero_1.pos[0] >= 695 and hero_1.pos[1] <= 688:
-                    move(hero_1, "down")
-                    count_1 += 1
-                    count_motion += 1
-                    person_1_steps += 1
-                elif event.key == pygame.K_LEFT and hero_1.pos[1] >= 690:
-                    move(hero_1, "left")
-                    count_1 += 1
-                    count_motion += 1
-                    person_1_steps += 1
-                elif event.key == pygame.K_RIGHT and hero_1.pos[1] <= 93:
-                    move(hero_1, "right")
-                    count_1 += 1
-                    count_motion += 1
-                    person_1_steps += 1
+                last = pygame.time.get_ticks()
+                while True:
+                    cooldown = 10
+                    now = pygame.time.get_ticks()
+                    if now - last >= cooldown:
+                        last = now
+                        if event.key == pygame.K_UP and hero_1.pos[0] <= 105:
+                            move(hero_1, "up")
+                            count_1 += 1
+                            count_motion += 1
+                            person_1_steps += 1
+                        elif event.key == pygame.K_DOWN and hero_1.pos[0] >= 695 and hero_1.pos[1] <= 688:
+                            move(hero_1, "down")
+                            count_1 += 1
+                            count_motion += 1
+                            person_1_steps += 1
+                        elif event.key == pygame.K_LEFT and hero_1.pos[1] >= 690:
+                            move(hero_1, "left")
+                            count_1 += 1
+                            count_motion += 1
+                            person_1_steps += 1
+                        elif event.key == pygame.K_RIGHT and hero_1.pos[1] <= 93:
+                            move(hero_1, "right")
+                            count_1 += 1
+                            count_motion += 1
+                            person_1_steps += 1
+                        break
                 if person_1_steps == step:
                     person_1_steps = 0
                     if count_1 in list_of_numbers_renta:
@@ -586,34 +587,41 @@ while running:
                             player_1_purse -= result
                             player_2_purse += result
                     elif count_1 == 7 or count_1 == 22:  # шанс
-                        '''image, tax = chance()
-                        get_chance(image)
-                        player_1_purse -= tax'''
+                        image, tax = chance()
+                        player_1_purse -= tax
+                        string_rendered_chance = font.render(f'Ваш налог: {str(tax)}', 1, pygame.Color('black'))
                     elif count_1 == 2 or count_1 == 17 or count_1 == 33 or count_1 == 4 or count_1 == 5 or count_1 == 12 \
                             or count_1 == 15 or count_1 == 25 or count_1 == 28 or count_1 == 35:  # comunity chest
                         player_1_purse -= 100
-
+                        string_rendered_chance = font.render(f'Ваш налог: 100', 1, pygame.Color('black'))
             if motion == 2 and count_motion <= step:
-                if event.key == pygame.K_UP:
-                    move(hero_2, "up")
-                    count_2 += 1
-                    count_motion += 1
-                    person_2_steps += 1
-                elif event.key == pygame.K_DOWN:
-                    move(hero_2, "down")
-                    count_2 += 1
-                    count_motion += 1
-                    person_2_steps += 1
-                elif event.key == pygame.K_LEFT:
-                    move(hero_2, "left")
-                    count_2 += 1
-                    count_motion += 1
-                    person_2_steps += 1
-                elif event.key == pygame.K_RIGHT:
-                    move(hero_2, "right")
-                    count_2 += 1
-                    count_motion += 1
-                    person_2_steps += 1
+                last = pygame.time.get_ticks()
+                while True:
+                    cooldown = 10
+                    now = pygame.time.get_ticks()
+                    if now - last >= cooldown:
+                        last = now
+                        if event.key == pygame.K_UP and hero_2.pos[0] <= 105:
+                            move(hero_2, "up")
+                            count_2 += 1
+                            count_motion += 1
+                            person_2_steps += 1
+                        elif event.key == pygame.K_DOWN and hero_2.pos[0] >= 695 and hero_2.pos[1] <= 688:
+                            move(hero_2, "down")
+                            count_2 += 1
+                            count_motion += 1
+                            person_2_steps += 1
+                        elif event.key == pygame.K_LEFT and hero_2.pos[1] >= 690:
+                            move(hero_2, "left")
+                            count_2 += 1
+                            count_motion += 1
+                            person_2_steps += 1
+                        elif event.key == pygame.K_RIGHT and hero_1.pos[1] <= 93:
+                            move(hero_2, "right")
+                            count_2 += 1
+                            count_motion += 1
+                            person_2_steps += 1
+                        break
                 if person_2_steps == step:
                     person_2_steps = 0
                     if count_2 in list_of_numbers_renta:
@@ -700,12 +708,13 @@ while running:
                             player_2_purse -= result
                             player_1_purse += result
                     elif count_2 == 7 or count_2 == 22:  # шанс
-                        '''image, tax = chance()
-                        get_chance(image)
-                        player_2_purse -= tax'''
+                        image, tax = chance()
+                        player_1_purse -= tax
+                        string_rendered_chance = font.render(f'Ваш налог: {str(tax)}', 1, pygame.Color('black'))
                     elif count_2 == 2 or count_2 == 17 or count_2 == 33 or count_2 == 4 or count_2 == 5 or count_2 == 12 \
                             or count_2 == 15 or count_2 == 25 or count_2 == 28 or count_2 == 35:  # comunity chest
                         player_2_purse -= 100
+                        string_rendered_chance = font.render(f'Ваш налог: 100', 1, pygame.Color('black'))
 
             if count_1 == 40:
                 player_1_purse += 200
@@ -721,20 +730,20 @@ while running:
                 motion = switch_motion(motion)
                 count_motion = 0
                 step = -10
+            if player_1_purse < 0:
+                end_screen('player 1')
+            if player_2_purse < 0:
+                end_screen('player 2')
+
 
     # координаты блока: 102, 97____698, 982
-    string_rendered_1 = font.render(f'motion: {str(motion)}', 1, pygame.Color('black'))
-    string_rendered_2 = font.render(f'purses: {str(player_1_purse), str(player_2_purse)}', 1, pygame.Color('black'))
-    string_rendered_3 = font.render(f'count_motion: {str(count_motion)}', 1, pygame.Color('black'))
-    string_rendered_4 = font.render(f'count: {str(count_1), str(count_2)}', 1, pygame.Color('black'))
-    string_rendered_5 = font.render(f'is double: {str(double)}', 1, pygame.Color('black'))
+    string_rendered_1 = font.render(f'player 1 purse: {str(player_1_purse)}', 1, pygame.Color('black'))
+    string_rendered_2 = font.render(f'player 2 purse: {str(player_2_purse)}', 1, pygame.Color('black'))
 
     screen.blit(field_image, (0, 0))
-    screen.blit(string_rendered_1, (450, 100))
-    screen.blit(string_rendered_2, (450, 150))
-    screen.blit(string_rendered_3, (450, 200))
-    screen.blit(string_rendered_4, (450, 250))
-    screen.blit(string_rendered_5, (450, 300))
+    screen.blit(string_rendered_chance, (450, 100))
+    screen.blit(string_rendered_1, (450, 150))
+    screen.blit(string_rendered_2, (450, 200))
 
     sprite_group.draw(screen)
     hero_group.draw(screen)
