@@ -207,7 +207,7 @@ def start_screen():
     font = pygame.font.Font(None, 30)
     text_coord = 50
     for line in intro_text:
-        string_rendered = font.render(line, 1, pygame.Color('cyan'))
+        string_rendered = font.render(line, 1, pygame.Color('white'))
         intro_rect = string_rendered.get_rect()
         text_coord += 10
         intro_rect.top = text_coord
@@ -264,7 +264,7 @@ def buy_or_not():
     font = pygame.font.Font(None, 75)
     text_coord = 50
     for line in intro_text:
-        string_rendered = font.render(line, 10, pygame.Color('cyan'))
+        string_rendered = font.render(line, 10, pygame.Color('white'))
         intro_rect = string_rendered.get_rect()
         text_coord += 10
         intro_rect.top = text_coord
@@ -470,8 +470,8 @@ while running:
                     if motion == 2:
                         double_count_2 = 0
             if event.key == pygame.K_0:
-                motion = switch_motion(motion)
-
+                end_screen('player 1')
+                terminate()
             if motion == 1 and count_motion <= step:
                 last = pygame.time.get_ticks()
                 while True:
@@ -734,7 +734,6 @@ while running:
                 end_screen('player 1')
             if player_2_purse < 0:
                 end_screen('player 2')
-
 
     # координаты блока: 102, 97____698, 982
     string_rendered_1 = font.render(f'player 1 purse: {str(player_1_purse)}', 1, pygame.Color('black'))
